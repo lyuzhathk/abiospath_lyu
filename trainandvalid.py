@@ -1,14 +1,15 @@
 import argparse
 import collections
-import torch
-import numpy as np
-import dataset as module_data
-import model_metric.loss  as module_loss
-import model_metric.metric as module_metric
-from model import AFStroke as module_arch
-from parse_config import ConfigParser
-from trainer import Trainer
 
+import model_metric.loss as module_loss
+import model_metric.metric as module_metric
+import numpy as np
+import torch
+from parse_config import ConfigParser
+
+import dataloader.dataset as module_data
+from model import AFStroke as module_arch
+from trainer import Trainer
 
 SEED = 123
 torch.manual_seed(SEED)
@@ -28,7 +29,6 @@ def main(config):
     adj = data_loader.get_sparse_adj()
     node_num = data_loader.get_node_num()
     type_num = data_loader.get_type_num()
-    # graph = data_loader.get_dpl_graph()
 
     # build model architecture, then print to console
     model = module_arch(node_num=node_num,
@@ -42,7 +42,7 @@ def main(config):
                         mlpdropout=config['arch']['args']['mlpdropout'],
                         mlpbn=config['arch']['args']['mlpbn'],
                         alpha=config['arch']['args']['alpha'],
-                        gcn = config['arch']['args']['gcn'],
+                        gcn=config['arch']['args']['gcn'],
                         num_of_direction=config['arch']['args']['num_of_direction']
                         )
     logger.info(model)
@@ -65,9 +65,9 @@ def main(config):
                       valid_data_loader=valid_data_loader,
                       test_data_loader=test_data_loader,
                       lr_scheduler=lr_scheduler,
-                      weight_loss_0 = weight_loss_0,
-                      weight_loss_1 = weight_loss_1,
-                      weight_loss_pos = weight_loss_pos)
+                      weight_loss_0=weight_loss_0,
+                      weight_loss_1=weight_loss_1,
+                      weight_loss_pos=weight_loss_pos)
 
     trainer.train()
 
@@ -90,11 +90,11 @@ def main(config):
         for i, met in enumerate(test_metrics)})
     logger.info(log)
 
+
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description='PyTorch Template')
-    '''"/home/zhiheng/cvd/saved/models/AF_Stroke/0817_180341/config.json"'''
-    '''"/home/zhiheng/cvd/config/config.json"'''
-    args.add_argument('-c', '--config', default="/home/zhiheng/cvd/config/config.json", type=str,
+
+    args.add_argument('-c', '--config', default="/config/config.json", type=str,
                       help='config file path (default: None)')
     args.add_argument('-r', '--resume', default=None, type=str,
                       help='path to latest checkpoint (default: None)')
