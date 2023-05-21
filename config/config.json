@@ -1,0 +1,79 @@
+{
+    "name": "AF_Stroke",
+    "n_gpu": 1,
+
+    "arch": {
+        "type": "AF_Stroke",
+        "args": {
+            "emb_dim": 64,
+            "gcn_layersize": [64, 128, 64],
+            "number_of_heads": 16,
+            "dropout": 0.75,
+            "mlpdropout": 0,
+            "mlpbn": 0.95,
+            "alpha": 0.5,
+            "gcn": false,
+            "num_of_direction": 2
+        }
+    },
+    "data_loader": {
+        "type": "PathDataLoader",
+        "args":{
+            "data_dir": "/home/zhiheng/cvd/zhiheng_network/",
+            "batch_size": 135,
+            "oversampling_factor": 0.7,
+            "undersampling_factor": 0.3,
+            "max_path_length": 8,
+            "max_path_num": 128,
+            "max_drug_disease_interaction": 11,
+            "max_disease_num": 14,
+            "max_stroke_path_num": 40,
+            "random_state": 30,
+            "random_state_data_loader": 80,
+            "recreate": false,
+            "use_disease_seed": true,
+            "shuffle": true,
+            "validation_split": 0.2,
+            "test_split": 0.1,
+            "num_workers": 2,
+            "oversampling": false,
+            "undersampling": false,
+            "partial_pair": false
+
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.008,
+            "weight_decay": 0,
+            "amsgrad": true
+        }
+    },
+    "loss": "bce_withlogits_loss",
+    "weight_loss_0" : 0.2,
+    "weight_loss_1" : 1.5,
+    "weight_loss_pos": 5,
+
+    "metrics": [
+        "accuracy", "recall", "pr_auc", "roc_auc","f1_score"
+    ],
+    "Ks": [5, 10, 20, 50, 100],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 10,
+            "gamma": 0.4
+        }
+    },
+    "trainer": {
+        "epochs": 50,
+        "save_dir": "/home/zhiheng/cvd/saved/",
+        "save_period": 50,
+        "verbosity": 2,
+
+        "monitor": "min val_loss",
+        "early_stop": 5,
+        "tensorboard": false
+    }
+}
