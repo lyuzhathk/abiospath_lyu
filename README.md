@@ -24,7 +24,7 @@ Files like `.DS_Store` and `README.md` are used for repository management and do
 
 The main scripts to run are `trainandvalid.py` for training and validating the model and `testfile.py` for testing the model's performance.
 
-You can modify the default parameters for the scripts in the `config/` directory. The current parameters are stored in `config/default.json` (for example).
+You can modify the default parameters for the scripts in the `config/` directory. The current parameters are stored in `config/config.json` (for example).
 
 To train the model, run:
 
@@ -40,5 +40,5 @@ python test.py
 
 
 ## Data
-Data used in this project is available upon request. Please send an email to [zhiheng.lyu@my.cityu.edu]
+Data used in this project is available upon request. Please send an email to [zhiheng.lyu@my.cityu.edu.hk]
 
