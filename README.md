@@ -39,6 +39,6 @@ python test.py
 
 
 
-## Running the Project
+## Data
 Data used in this project is available upon request. Please send an email to [zhiheng.lyu@my.cityu.edu]
 
