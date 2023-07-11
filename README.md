@@ -30,10 +30,12 @@ To train the model, run:
 
 ```bash
 python trainandvalid.py
+```
 
 to test the model, run:
 ```bash
 python test.py
+```
 
 
 
