@@ -206,8 +206,8 @@ import random
 import numpy as np
 import pandas as pd
 import networkx as nx
-from tqdm import tqdm  # 进度条
-from scipy import sparse  # 创建稀疏矩阵
+from tqdm import tqdm  
+from scipy import sparse  
 from pathlib import Path
 from base import BaseDataLoader
 
