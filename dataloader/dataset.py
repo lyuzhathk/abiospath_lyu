@@ -82,30 +82,7 @@ class Dataset(object):
         df_concat.drop_duplicates(subset=['from', 'target', 'weight'], inplace=True)
         return df_concat
 
-    def _network_building(self):
-        ppi_directed = self._df_column_switch(df_name='ppi')
-        commorbidity_bidi = self._df_column_switch(df_name="commorbidity")
-
-        # the direction in drug-target network is drug -> target
-        drug_target_directed = self.data_dict['drug_target'].copy()
-        drug_target_directed.columns = ['from', 'target', 'weight']
-
-        if self.directed:
-            disease_target_directed = self.data_dict['disease_target'].copy()
-            disease_target_directed.columns = ['target', 'from', 'weight']
-        else:
-            disease_target_directed = self._df_column_switch(df_name="disease_target")
-
-        graph_directed = pd.concat([ppi_directed,
-                                    drug_target_directed, disease_target_directed, commorbidity_bidi])
-        graph_directed.drop_duplicates(subset=['from', 'target', 'weight'], inplace=True)
-
-        graph_nx = nx.from_pandas_edgelist(graph_directed, source='from', target='target', edge_attr=['weight'],
-                                           create_using=nx.DiGraph())
-
-        return graph_nx, graph_directed
-
-
+    
 import itertools
 
 from torch.utils.data import Dataset
@@ -175,26 +152,7 @@ class PathDataset(Dataset):
             disease_lengths_list.append(1)
             disease_mask_list.append([1] + [0] * 7)
             disease_type_list.append([self.type_dict[n] for n in disease] + [0] * 7)
-        full_array_list = [*full_path_array_list, *disease_array_list]
-        full_type_list = [*full_path_type_array_list, *disease_type_list]
-        full_lengths_list = [*full_path_lengths_array_list, *disease_lengths_list]
-        disease_location_list = [*([0] * len(full_path_array_list)), *disease_lengths_list]
-        path_location_list = [*([1] * len(full_path_array_list)), *([0] * len(disease_lengths_list))]
-        full_mask_list = [*full_path_mask_array_list, *disease_mask_list]
-        full_array = np.array(full_array_list)
-        full_type = np.array(full_type_list)
-        full_lengths = np.array(full_lengths_list)
-        full_mask = np.array(full_mask_list)
-        disease_location_array = np.array(disease_location_list)
-        path_location_array = np.array(path_location_list)
-        path_feature = torch.from_numpy(full_array).type(torch.LongTensor)
-        type_feature = torch.from_numpy(full_type).type(torch.LongTensor)
-        label = torch.from_numpy(np.array([tags])).type(torch.FloatTensor)
-        lengths = torch.from_numpy(full_lengths).type(torch.LongTensor)
-        mask = torch.from_numpy(full_mask).type(torch.ByteTensor)
-        disease_location = torch.from_numpy(disease_location_array).type(torch.LongTensor)
-        path_location = torch.from_numpy(path_location_array).type(torch.LongTensor)
-        path_num = path_location.sum()
+        
 
         return path_feature, type_feature, lengths, mask, label, patid, disease_location, path_location, path_num
 
@@ -322,7 +280,6 @@ class PathDataLoader(BaseDataLoader):
 
         return type_dict
 
-    # TODO negetative sampling!
 
     def _load_path_dict(self):
         if not self.recreate and self.partial_pair and self.data_dir.joinpath('processed',
@@ -395,10 +352,7 @@ class PathDataLoader(BaseDataLoader):
     def _create_dataset(self):
         print("creating tensor dataset....")
         drug_disease_array = list(self.path_dict.keys())
-        patient_tags_pd = pd.read_csv('zhiheng_network/mapped_network/patient_tags.csv', header=0)
-        patient_tags_list = [tuple(patient_tag) for patient_tag in patient_tags_pd.values]
-        patient_drug_pd = pd.read_csv('zhiheng_network/mapped_network/patient_drug.csv', header=0)
-        patient_icd_pd = pd.read_csv('zhiheng_network/mapped_network/patient_icd.csv', header=0)
+        
         dataset = PathDataset(drug_disease_array=drug_disease_array, total_path_dict=self.path_dict,
                               type_dict=self.type_dict, patient_tags_list=patient_tags_list,
                               patient_drugs_pd=patient_drug_pd,
